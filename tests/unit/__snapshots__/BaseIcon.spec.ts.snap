@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<ScoroIcon /> renders and displays properly 1`] = `
+<svg
+  class="icon icon--16"
+>
+  <use
+    href="#icon-search-16"
+  />
+</svg>
+`;
