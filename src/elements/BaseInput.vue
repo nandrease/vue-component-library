@@ -1,12 +1,18 @@
 <template>
-  <div class="input">
+  <div class="input input--rounded" :class="[`input--${status.toLowerCase()}`, { 'input--disabled': isDisabled }]">
     <label v-if="placeholder" class="input__placeholder-label">{{ placeholder }}</label>
     <input
       class="input__field"
       :value="value"
+      :id="id"
+      :type="type"
+      v-bind="$attrs"
+      v-on="{
+        ...$listeners,
+        input: $event => $emit('input', $event.target.value)
+      }"
       @focus.prevent="() => $emit('input-focused')"
       @blur.prevent="() => $emit('input-blurred')"
-      @input.prevent="() => $emit('input', $event.target.value)"
     />
   </div>
 </template>
@@ -22,6 +28,25 @@ const BaseInput = Vue.extend({
     value: {
       type: String,
       required: true
+    },
+    id: {
+      type: String,
+      required: true
+    },
+    type: {
+      type: String,
+      default: "text"
+    },
+    status: {
+      type: String
+    },
+    disabled: {
+      type: String
+    }
+  },
+  computed: {
+    isDisabled(): boolean {
+      return typeof this.disabled !== "undefined";
     }
   }
 });
