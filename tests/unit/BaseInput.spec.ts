@@ -20,7 +20,7 @@ describe("<BaseInput>", () => {
     expect(placeholderElem.text()).toBe("Scorpions - Still loving you");
   });
 
-  it("emits an input-focused and input-blurred events on input focus and blur respectively", () => {
+  it("emits an 'input-focused' and 'input-blurred' events on input focus and blur respectively", () => {
     const inputElem = wrapper.find(".input__field");
     inputElem.trigger("focus");
     expect(wrapper.emitted("input-focused")).toBeTruthy();
@@ -28,7 +28,7 @@ describe("<BaseInput>", () => {
     expect(wrapper.emitted("input-blurred")).toBeTruthy();
   });
 
-  it("emits an input event with input element value on input change", () => {
+  it("emits an 'input' event with input element value on input change", () => {
     const inputElem = wrapper.find(".input__field");
     const inputField: HTMLInputElement = wrapper.find(".input__field").element as HTMLInputElement;
     expect(inputField.value).toBe(propsData.value);
