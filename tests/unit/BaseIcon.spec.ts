@@ -32,7 +32,7 @@ describe("<ScoroIcon />", () => {
   });
 
   it("it uses fill prop to color the element", () => {
-    expect(wrapper.attributes().style).toBe(undefined);
+    expect(wrapper.attributes().style).toBeFalsy();
     wrapper = shallowMount(BaseIcon, {
       propsData: {
         ...propsData,
