@@ -6,7 +6,7 @@ describe("<BaseInput>", () => {
   let wrapper: Wrapper<Vue>;
 
   const propsData = {
-    value: "test",
+    value: "",
     id: "id123",
     type: "text",
     status: "",
@@ -110,7 +110,7 @@ describe("<BaseInput>", () => {
 
       expect(wrapper.classes()).toContain("input--disabled");
       const inputElem = wrapper.find(".input__field");
-      expect(inputElem.attributes().disabled).toBeTruthy;
+      expect(inputElem.attributes().disabled).toBeTruthy();
     });
   });
 
@@ -168,21 +168,32 @@ describe("<BaseInput>", () => {
       expect(actionElem.exists()).toBe(false);
     });
 
-    it("hides the loading and action-icon when field is disabled", () => {
-      wrapper = shallowMount(BaseInput, {
-        propsData: { ...propsData, disabled: "disabled", status: STATUS_LOADING, actionIcon, typeIcon }
-      });
+    it("shows an X icon to clear the value on input and hides other action icons", () => {
+      wrapper = shallowMount(BaseInput, { propsData: { ...propsData, actionIcon } });
 
-      expect(wrapper.classes()).toContain("input--disabled");
+      let clearElem = wrapper.find(".input__clear");
+      expect(clearElem.exists()).toBe(false);
 
-      const typeElem = wrapper.find(".input__type-icon");
-      expect(typeElem.exists()).toBe(true);
+      let actionElem = wrapper.find(".input__action-icon");
+      expect(actionElem.exists()).toBe(true);
 
-      const actionElem = wrapper.find(".input__action-icon");
+      wrapper = shallowMount(BaseInput, { propsData: { ...propsData, value: "some value", actionIcon } });
+      clearElem = wrapper.find(".input__clear");
+      expect(clearElem.exists()).toBe(true);
+
+      actionElem = wrapper.find(".input__action-icon");
       expect(actionElem.exists()).toBe(false);
+    });
 
-      const loadingElem = wrapper.find(".input__loading-circle");
-      expect(loadingElem.exists()).toBe(false);
+    it("emits 'input' event empty string when clicking on clear icon", () => {
+      wrapper = shallowMount(BaseInput, { propsData: { ...propsData, value: "some value" } });
+      const clearElem = wrapper.find(".input__clear");
+      clearElem.trigger("click");
+      const inputField: HTMLInputElement = wrapper.find(".input__field").element as HTMLInputElement;
+      expect(wrapper.vm.$data.currentValue).toBe("");
+      expect(inputField.value).toBe("");
+      expect(wrapper.emitted("input")).toBeTruthy();
+      expect(wrapper.emitted().input[0]).toEqual([""]);
     });
   });
 });

@@ -10,6 +10,14 @@
       placeholder="placehorlder text"
     ></base-input>
     {{ value }}
+    <base-input
+      v-model="value2"
+      id="test"
+      disabled="disabled"
+      :type-icon="{ icon: 'icon-search-16' }"
+      :action-icon="{ icon: 'icon-pencil-16' }"
+      placeholder="placehorlder text"
+    ></base-input>
   </div>
 </template>
 
@@ -26,7 +34,8 @@ export default Vue.extend({
   },
   data() {
     return {
-      value: ""
+      value: "",
+      value2: ""
     };
   }
 });

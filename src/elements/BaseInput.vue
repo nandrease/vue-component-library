@@ -4,7 +4,7 @@
     :class="[
       status ? `input--${status.toLowerCase()}` : '',
       { 'input--disabled': isDisabled },
-      { 'input--active': value },
+      { 'input--focused': focused },
       { 'input--type-icon': typeIcon },
       { 'input--action-icon': actionIcon || isLoading }
     ]"
@@ -13,28 +13,39 @@
     <label v-if="placeholder" class="input__placeholder-label">{{ placeholder }}</label>
     <input
       class="input__field"
-      :value="value"
+      v-model="currentValue"
       :id="id"
       :type="type"
+      :disabled="isDisabled"
       autocomplete="off"
       spellcheck="false"
       v-bind="$attrs"
       v-on="{
         ...$listeners,
-        input: $event => $emit('input', $event.target.value)
+        input: $event => $emit('input', currentValue)
       }"
-      @focus.prevent="() => $emit('input-focused')"
-      @blur.prevent="() => $emit('input-blurred')"
+      @focus="
+        () => {
+          focused = true;
+          $emit('input-focused');
+        }
+      "
+      @blur="
+        () => {
+          focused = !!currentValue || false;
+          $emit('input-blurred');
+        }
+      "
     />
-    <template v-if="!isDisabled">
-      <span v-if="isLoading" class="input__loading-circle"></span>
-      <base-icon
-        v-else-if="actionIcon"
-        class="input__action-icon"
-        v-bind="{ ...actionIcon }"
-        @click.native="() => $emit('action-icon-click')"
-      ></base-icon>
-    </template>
+
+    <base-icon v-if="value" class="input__clear" v-bind="{ ...clearIcon }" @click.native="clear"></base-icon>
+    <span v-else-if="isLoading" class="input__loading-circle"></span>
+    <base-icon
+      v-else-if="actionIcon"
+      class="input__action-icon"
+      v-bind="{ ...actionIcon }"
+      @click.native="() => !isDisabled && $emit('action-icon-click')"
+    ></base-icon>
   </div>
 </template>
 
@@ -46,6 +57,12 @@ import BaseIcon from "@/elements/BaseIcon.vue";
 const BaseInput = Vue.extend({
   components: { BaseIcon },
   inheritAttrs: false,
+  data() {
+    return {
+      currentValue: "",
+      focused: false
+    };
+  },
   props: {
     placeholder: {
       type: String
@@ -76,6 +93,10 @@ const BaseInput = Vue.extend({
     actionIcon: {
       type: Object,
       default: null
+    },
+    clearIcon: {
+      type: Object,
+      default: () => ({ icon: "icon-x-16" })
     }
   },
   computed: {
@@ -84,6 +105,13 @@ const BaseInput = Vue.extend({
     },
     isLoading(): boolean {
       return this.status === STATUS_LOADING;
+    }
+  },
+  methods: {
+    clear() {
+      this.currentValue = "";
+      this.focused = !this.focused;
+      this.$emit("input", "");
     }
   }
 });
@@ -94,23 +122,19 @@ export default BaseInput;
 @import "@/assets/styles/_color_variables.scss";
 .input {
   position: relative;
+  background: $neutral-00;
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  background: $neutral-00;
-  border: 1px solid $neutral-40;
   box-sizing: border-box;
   color: $neutral-70;
   max-width: 100%;
 
   /* modifiers start */
-  &--rounded {
-    border-radius: 4px;
-  }
   &--error {
     border-color: $red-50;
   }
-  &--active {
+  &--focused {
     .input__placeholder-label {
       font-size: 10px;
       top: -8px;
@@ -128,7 +152,6 @@ export default BaseInput;
   &--disabled {
     background: $neutral-20;
     color: $neutral-80;
-    border-color: transparent;
 
     .input__placeholder-label {
       background-color: transparent;
@@ -139,19 +162,24 @@ export default BaseInput;
   &.input--action-icon {
     .input__field,
     .input__placeholder-label {
-      padding-right: 0;
+      padding-right: 4rem;
+    }
+
+    &.input--focused {
+      .input__placeholder-label {
+        padding-right: 0;
+      }
     }
   }
-
   &.input--type-icon {
     .input__field,
     .input__placeholder-label {
       padding-left: 4rem;
     }
-  }
-  &.input--type-icon.input--active {
-    .input__placeholder-label {
-      padding-left: 0;
+    &.input--focused {
+      .input__placeholder-label {
+        padding-left: 0;
+      }
     }
   }
   /* modifiers end */
@@ -161,8 +189,12 @@ export default BaseInput;
     left: 8px;
     position: absolute;
   }
-  &__action-icon {
+  &__action-icon,
+  &__clear {
     padding: 8px;
+    position: absolute;
+    right: 0;
+    z-index: 2;
   }
 
   &__placeholder-label {
@@ -177,17 +209,13 @@ export default BaseInput;
 
   .input__field {
     background: transparent;
+    border: 1px solid $neutral-40;
+    border-radius: 4px;
     outline: none;
     padding: 1.25rem 1rem;
-    flex: 1 1 auto;
     overflow: hidden;
     text-overflow: ellipsis;
     z-index: 1;
-
-    &,
-    &:focus {
-      border: none;
-    }
   }
   /* elements end */
 }
