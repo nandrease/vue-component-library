@@ -2,8 +2,14 @@
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png" />
     <base-icon class="color--red" fill="seagreen" icon="icon-pencil-24" />
-    <base-input v-model="form.value" id="test"></base-input>
-    {{form.value}}
+    <base-input
+      v-model="value"
+      id="test"
+      :type-icon="{ icon: 'icon-search-16' }"
+      :action-icon="{ icon: 'icon-pencil-16' }"
+      placeholder="placehorlder text"
+    ></base-input>
+    {{ value }}
   </div>
 </template>
 
@@ -20,21 +26,12 @@ export default Vue.extend({
   },
   data() {
     return {
-      form: {
-        value: ""
-      }
-    }
+      value: ""
+    };
   }
 });
 </script>
 
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+@import "@/assets/styles/_base_theme.scss";
 </style>

@@ -1,0 +1,25 @@
+@import "color_variables.scss";
+@import "variables.scss";
+
+* {
+    font-family: $font-family;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    font-size: 8px;
+    line-height: 1.2;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+body {
+    font: 500 1.875rem $font-family;
+    background-color: $neutral-20;
+    font-feature-settings: 'tnum';
+    color: $neutral-90;
+    box-sizing: border-box;
+}
+input, textarea, select {
+    font-size: 1.875rem;
+}
