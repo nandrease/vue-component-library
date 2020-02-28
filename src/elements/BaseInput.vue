@@ -8,10 +8,12 @@
       :id="id"
       :type="type"
       v-bind="$attrs"
-      v-on="$listeners"
+      v-on="{
+        ...$listeners,
+        input: $event => $emit('input', $event.target.value)
+      }"
       @focus.prevent="() => $emit('input-focused')"
       @blur.prevent="() => $emit('input-blurred')"
-      @input="$event => $emit('input', $event.target.value)"
     />
     <template v-if="!isDisabled">
       <span v-if="isLoading" class="input__loading-circle"></span>
